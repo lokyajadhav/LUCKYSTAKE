@@ -16,15 +16,7 @@ const root= BlockDataModel.find();
 let blockCount=0;
 const AddBlock=async function(req,res)
 {
-    await countBlock.updateOne(
-        {id:"b172232"},
-        {
-            $inc:{count:1}
-        },
-        {new: true},
-        //blockCount=count
-
-    )
+    
     //let remainingMiners=await selected.findOne({name:"lokya"})
     //const arr=remainingMiners.priorityMiners;
 
@@ -38,7 +30,7 @@ const AddBlock=async function(req,res)
    console.log(getBlockCount);
    finalBlockCount=getBlockCount.count;
    console.log(finalBlockCount);
-   let getPreBlockHash=await BlockModel.findOne({BlockNumber:finalBlockCount-1})
+   let getPreBlockHash=await BlockModel.findOne({BlockNumber:finalBlockCount})
         PreBlockHashToAdd=getPreBlockHash.BlockHash;
 
     console.log(finalMiner);
@@ -72,13 +64,21 @@ const AddBlock=async function(req,res)
 
     })
     newAddBlock.save();
-    
+    await countBlock.updateOne(
+        {id:"b172232"},
+        {
+            $inc:{count:1}
+        },
+        {new: true},
+        //blockCount=count
+
+    )
     const stakedata=await minermodel.findOne({name:finalMiner});
     let minerStake=stakedata.stake;
     let minerBalance=stakedata.balance
     minerStake=(minerStake+100+minerBalance)
     console.log(stakedata);
-    await minermodel.updateOne({name:finalMiner},
+    await minermodel.updateMany({name:finalMiner},
        
         {
              $inc : {reward: 100 },
